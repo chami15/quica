@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#141537">
+<meta name="description" content="Mire, quique e quebre blocos. Grátis e sem anúncios.">
+<title>Quica</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="cv"></canvas>
+
+  <!-- ===================== Início ===================== -->
+  <section id="view-home" class="view">
+    <header class="topbar">
+      <div class="counter"><span class="counter-ico coin"></span><b class="js-coins">0</b></div>
+      <div class="topbar-right">
+        <button id="btn-help" class="btn sq" data-icon="help" aria-label="Como jogar"></button>
+        <button class="btn sq js-settings" data-icon="gear" aria-label="Ajustes"></button>
+      </div>
+    </header>
+    <main class="home-main">
+      <h1 class="logo" aria-label="Quica">
+        <span aria-hidden="true">Q</span><span aria-hidden="true">u</span><span class="li" aria-hidden="true">ı<i class="dot"></i></span><span aria-hidden="true">c</span><span aria-hidden="true">a</span>
+      </h1>
+      <canvas id="home-stage" class="stage" aria-hidden="true"></canvas>
+      <div class="record"><span class="record-ico" data-icon="trophy"></span><span class="record-lbl">Recorde</span><b id="home-best">0</b></div>
+      <div class="play-row">
+        <button id="btn-new" class="btn blue sq big" data-icon="restart" aria-label="Nova partida" hidden></button>
+        <button id="btn-play" class="btn yellow play-btn">
+          <span class="play-txt"><b id="play-label">Jogar</b><small id="play-sub"></small></span>
+        </button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ===================== Coleção ===================== -->
+  <section id="view-balls" class="view" hidden>
+    <header class="topbar">
+      <div class="counter"><span class="counter-ico coin"></span><b class="js-coins">0</b></div>
+      <div class="topbar-right">
+        <button class="btn sq js-settings" data-icon="gear" aria-label="Ajustes"></button>
+      </div>
+    </header>
+    <div class="seg-tabs" role="tablist">
+      <button class="on" data-sec="balls" role="tab">Bolinhas</button>
+      <button data-sec="themes" role="tab">Temas</button>
+    </div>
+    <div id="sec-themes" class="theme-grid" hidden></div>
+    <div id="sec-balls" class="sec-balls">
+      <div id="ball-card" class="ball-hero">
+        <div class="ball-top">
+          <canvas id="balls-stage" class="stage small" aria-hidden="true"></canvas>
+          <div class="ball-meta">
+            <div class="ball-head"><div id="ball-name" class="ball-name"></div><div id="ball-tags" class="ball-tags"></div></div>
+            <p id="ball-desc" class="ball-desc"></p>
+          </div>
+        </div>
+        <div id="ball-power" class="ball-power" hidden></div>
+      </div>
+      <div id="ball-grid" class="ball-grid"></div>
+    </div>
+  </section>
+
+  <!-- ===================== Barra inferior ===================== -->
+  <nav id="nav" class="nav">
+    <button class="nav-btn" data-tab="balls" data-icon="balls" aria-label="Coleção"></button>
+    <button class="nav-btn on" data-tab="home" data-icon="home" aria-label="Início"></button>
+    <button class="nav-btn soon" data-tab="modes" data-icon="modes" aria-label="Modos de jogo (em breve)"><span class="soon-badge" data-icon="lock"></span></button>
+  </nav>
+
+  <!-- ===================== HUD da partida ===================== -->
+  <div id="hud-top" class="hud-top" hidden>
+    <div class="hud-left">
+      <button id="btn-pause" class="btn sq" data-icon="pause" aria-label="Pausar"></button>
+      <div class="counter small" title="Recorde"><span class="counter-ico" data-icon="trophy"></span><b id="hud-best">0</b></div>
+    </div>
+    <div id="hud-line" class="hud-line">1</div>
+    <div class="hud-right">
+      <div class="counter small" title="Moedas"><span class="counter-ico coin"></span><b id="hud-coins">0</b></div>
+    </div>
+  </div>
+
+  <div id="hud-bottom" class="hud-bottom" hidden>
+    <div id="actions" class="actions"></div>
+    <div class="firing">
+      <button id="btn-recall" class="btn sq fire-btn" data-icon="recall" aria-label="Recolher bolas" hidden></button>
+      <button id="btn-speed" class="btn sq fire-btn" data-icon="fast" aria-label="Acelerar" hidden><span id="speed-x" class="fire-x"></span></button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- ===================== Pop-ups ===================== -->
+  <section id="pop-boost" class="pop" hidden>
+    <div class="sheet">
+      <div class="sheet-title">Reforços</div>
+      <button class="btn red sq sheet-x" data-close data-icon="close" aria-label="Fechar"></button>
+      <p class="sheet-sub">Todos grátis. Ligue os que quiser para esta partida.</p>
+      <div id="boost-list" class="card-list"></div>
+      <button id="btn-start" class="btn green cta">Começar</button>
+    </div>
+  </section>
+
+  <section id="pop-settings" class="pop" hidden>
+    <div class="sheet">
+      <div class="sheet-title">Ajustes</div>
+      <button class="btn red sq sheet-x" data-close data-icon="close" aria-label="Fechar"></button>
+      <div id="settings-list" class="set-list"></div>
+      <p class="sheet-foot">Quica · grátis e sem anúncios</p>
+    </div>
+  </section>
+
+  <section id="pop-guide" class="pop" hidden>
+    <div class="sheet tall">
+      <div class="sheet-title">Como jogar</div>
+      <button class="btn red sq sheet-x" data-close data-icon="close" aria-label="Fechar"></button>
+      <div id="guide-list" class="guide-list"></div>
+    </div>
+  </section>
+
+  <section id="pop-pause" class="pop" hidden>
+    <div class="sheet center">
+      <div class="sheet-title">Pausa</div>
+      <button id="btn-resume" class="btn green cta">Continuar</button>
+      <div class="round-row">
+        <button id="btn-restart" class="btn sq big" data-icon="restart" aria-label="Recomeçar"></button>
+        <button id="btn-pause-settings" class="btn sq big" data-icon="gear" aria-label="Ajustes"></button>
+        <button id="btn-tohome" class="btn sq big" data-icon="home" aria-label="Início (a partida fica salva)"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="pop-over" class="pop" hidden>
+    <div class="sheet center">
+      <div id="over-title" class="sheet-title red">Fim de jogo</div>
+      <div class="over-line"><small>linha</small><b id="over-line">0</b></div>
+      <div id="over-best" class="over-best"></div>
+      <div id="over-stats" class="over-stats"></div>
+      <button id="btn-cont-free" class="btn green cta">Continuar grátis</button>
+      <button id="btn-cont-coin" class="btn yellow cta"><span class="counter-ico coin"></span><span id="cont-cost"></span></button>
+      <div class="round-row">
+        <button id="btn-again" class="btn sq big" data-icon="restart" aria-label="Jogar de novo"></button>
+        <button id="btn-over-home" class="btn sq big" data-icon="home" aria-label="Início"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="pop-confirm" class="pop" hidden>
+    <div class="sheet center">
+      <div id="confirm-title" class="sheet-title"></div>
+      <p id="confirm-text" class="sheet-sub"></p>
+      <button id="confirm-yes" class="btn red cta"></button>
+      <button class="btn cta" data-close>Cancelar</button>
+    </div>
+  </section>
+
+  <!-- ===================== Carregamento ===================== -->
+  <section id="loader" class="loader boot">
+    <div class="loader-center">
+      <h1 class="logo boot-only" aria-label="Quica">
+        <span aria-hidden="true">Q</span><span aria-hidden="true">u</span><span class="li" aria-hidden="true">ı<i class="dot"></i></span><span aria-hidden="true">c</span><span aria-hidden="true">a</span>
+      </h1>
+      <canvas id="loader-scene" class="loader-scene" aria-hidden="true"></canvas>
+      <div class="loader-bar match-only"><div id="loader-fill" class="loader-fill"></div></div>
+      <div id="loader-status" class="loader-status match-only">Carregando…</div>
+    </div>
+    <div class="tip-card match-only">
+      <span class="tip-tag">Dica</span>
+      <p id="loader-tip"></p>
+    </div>
+  </section>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/game.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/render.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
